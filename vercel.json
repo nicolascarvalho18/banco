@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "public": true,
+  "outputDirectory": "src/main/resources/static",
+  "routes": [
+    {
+      "src": "/css/(.*)",
+      "dest": "/css/$1"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/js/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}

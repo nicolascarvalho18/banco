@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Banco SAF • Plataforma de Criptomoedas & Custódia Digital</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563EB'/><text x='50%' y='68%' font-size='50' font-weight='800' fill='white' text-anchor='middle'>SAF</text></svg>" />
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+  <!-- ==========================================
+       CONTAINER DE AUTENTICAÇÃO (LOGIN / REGISTRO / RECUPERAÇÃO)
+       ========================================== -->
+  <div id="authContainer" style="display: none; min-height: 100vh; align-items: center; justify-content: center; padding: 24px;">
+    <div style="width: 100%; max-width: 440px;">
+      
+      <!-- Brand Header -->
+      <div style="text-align: center; margin-bottom: 28px;">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; background: linear-gradient(135deg, #2563EB, #10B981); border-radius: var(--radius-md); margin-bottom: 12px; box-shadow: 0 4px 16px rgba(37,99,235,0.35);">
+          <span style="font-size: 1.3rem; font-weight: 800; color: #FFFFFF;">SAF</span>
+        </div>
+        <h1 style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em;">Banco SAF</h1>
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-top: 2px;">Plataforma Financeira de Criptoativos</p>
+      </div>
+
+      <!-- Card Login -->
+      <div id="authCardLogin" class="card" style="display: block;">
+        <h2 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: 18px;">Acessar sua Conta</h2>
+        
+        <form onsubmit="app.submitLogin(event)">
+          <div class="form-group">
+            <label class="form-label" for="loginInput">E-mail ou @username</label>
+            <input type="text" id="loginInput" class="form-control" placeholder="seu.email@exemplo.com ou @usuario" required />
+          </div>
+
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <label class="form-label" for="passwordInput" style="margin-bottom: 0;">Senha de Acesso</label>
+              <a href="#forgot-password" style="font-size: var(--font-size-xs); color: var(--color-accent); text-decoration: none;">Esqueceu a senha?</a>
+            </div>
+            <div style="position: relative;">
+              <input type="password" id="passwordInput" class="form-control" placeholder="Digite sua senha" required style="padding-right: 44px;" />
+              <button type="button" aria-label="Mostrar ou ocultar senha" onclick="app.togglePasswordVisibility('passwordInput', this)" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--text-muted); cursor: pointer;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 22px;">
+            <input type="checkbox" id="rememberMe" style="accent-color: var(--primary-blue);" />
+            <label for="rememberMe" style="font-size: var(--font-size-sm); color: var(--text-secondary); cursor: pointer;">Manter conectado</label>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" style="padding: 12px;">
+            Entrar na Plataforma
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-subtle); font-size: var(--font-size-sm); color: var(--text-secondary);">
+          Não possui uma conta? <a href="#register" style="color: var(--color-accent); font-weight: 600; text-decoration: none;">Criar conta</a>
+        </div>
+      </div>
+
+      <!-- Card Cadastro -->
+      <div id="authCardRegister" class="card" style="display: none;">
+        <h2 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: 16px;">Criar Conta Digital</h2>
+        
+        <form onsubmit="app.submitRegister(event)">
+          <div class="form-group">
+            <label class="form-label">Nome Completo</label>
+            <input type="text" id="regFullName" class="form-control" placeholder="Seu nome" required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nome de Usuário Único (@username)</label>
+            <input type="text" id="regUsername" class="form-control" placeholder="ex: satoshi.silva" required />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label">CPF</label>
+              <input type="text" id="regCpf" class="form-control" placeholder="000.000.000-00" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Data de Nascimento</label>
+              <input type="date" id="regBirthDate" class="form-control" required />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label">Celular</label>
+              <input type="tel" id="regPhone" class="form-control" placeholder="(11) 99999-9999" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">E-mail</label>
+              <input type="email" id="regEmail" class="form-control" placeholder="seu@email.com" required />
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div class="form-group">
+              <label class="form-label">Senha</label>
+              <input type="password" id="regPassword" class="form-control" placeholder="Mínimo 8 dígitos" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirmar Senha</label>
+              <input type="password" id="regConfirmPassword" class="form-control" placeholder="Repita a senha" required />
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 22px;">
+            <input type="checkbox" id="regTerms" required style="accent-color: var(--primary-blue); margin-top: 3px;" />
+            <label for="regTerms" style="font-size: var(--font-size-xs); color: var(--text-secondary); cursor: pointer;">
+              Li e concordo com os Termos de Uso e a Política de Privacidade do Banco SAF.
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" style="padding: 12px;">
+            Concluir Cadastro
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px; font-size: var(--font-size-sm); color: var(--text-secondary);">
+          Já tem uma conta? <a href="#login" style="color: var(--color-accent); font-weight: 600; text-decoration: none;">Fazer login</a>
+        </div>
+      </div>
+
+      <!-- Card Recuperar Senha -->
+      <div id="authCardForgot" class="card" style="display: none;">
+        <h2 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: 8px;">Recuperação de Acesso</h2>
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: 18px;">Informe o e-mail da sua conta para enviarmos o código de segurança.</p>
+        
+        <form onsubmit="event.preventDefault(); window.api.forgotPassword(document.getElementById('forgotEmail').value).then(() => { app.showToast('Código de recuperação enviado!', 'success'); window.location.hash = '#login'; });">
+          <div class="form-group">
+            <label class="form-label">E-mail Cadastrado</label>
+            <input type="email" id="forgotEmail" class="form-control" placeholder="seu@email.com" required />
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" style="padding: 12px;">
+            Enviar Código de Segurança
+          </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 18px; font-size: var(--font-size-sm);">
+          <a href="#login" style="color: var(--color-accent); text-decoration: none;">Voltar para o Login</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==========================================
+       APLICAÇÃO PRINCIPAL AUTENTICADA
+       ========================================== -->
+  <div id="mainApp" class="app-layout" style="display: none;">
+
+    <!-- Sidebar Lateral (260px) -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-icon">SAF</div>
+        <div>
+          <div class="brand-title">Banco SAF</div>
+          <div class="brand-subtitle">Cripto & Web3</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">Menu Principal</div>
+        <a class="nav-item active" data-view="dashboard" href="#dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect></svg>
+          Visão geral
+        </a>
+        <a class="nav-item" data-view="market" href="#market">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+          Mercado
+        </a>
+        <a class="nav-item" data-view="wallet" href="#wallet">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg>
+          Minha carteira
+        </a>
+        <a class="nav-item" data-view="statement" href="#statement">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Extrato
+        </a>
+
+        <div class="nav-section-title">Configurações</div>
+        <a class="nav-item" data-view="profile" href="#profile">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          Perfil e segurança
+        </a>
+        <a class="nav-item" id="navLinkAdmin" data-view="admin" href="#admin" style="display: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Painel Executivo
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-avatar-badge" id="sidebarUserAvatar">N</div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-size: var(--font-size-md); font-weight: 600; color: #FFFFFF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="sidebarUserName">Carregando...</div>
+          <div style="font-size: var(--font-size-xs); color: var(--text-muted);" id="sidebarUserRole">@cliente</div>
+        </div>
+        <button onclick="app.logout()" title="Encerrar sessão" aria-label="Sair da conta" style="background: transparent; border: none; color: var(--color-loss); cursor: pointer; padding: 6px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Área de Conteúdo Principal -->
+    <div class="main-wrapper">
+      
+      <!-- Header Superior Funcional -->
+      <header class="header">
+        <div class="header-left">
+          <button id="mobileMenuBtn" class="btn-icon-square" style="display: none;" aria-label="Abrir menu lateral">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+          <div class="header-titles">
+            <h1 id="pageDynamicTitle">Visão geral</h1>
+            <p id="pageDynamicSubtitle">Painel de patrimônio e cotações em tempo real</p>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <div class="status-badge">
+            <span class="status-dot"></span>
+            <span id="headerMarketStatusText">Mercado Conectado</span>
+          </div>
+
+          <button id="btnPrivacyToggle" class="btn-icon-square" title="Ocultar ou exibir valores" aria-label="Privacidade de valores">
+            <svg id="privacyEyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          </button>
+
+          <button id="btnThemeToggle" class="btn-icon-square" title="Alternar tema claro/escuro" aria-label="Alternar tema">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          </button>
+
+          <div class="user-avatar-badge" id="headerUserAvatar" style="cursor: pointer;" onclick="window.location.hash = '#profile'">N</div>
+        </div>
+      </header>
+
+      <!-- Viewport de Seções -->
+      <main class="content-container">
+
+        <!-- ==========================================
+             SEÇÃO: VISÃO GERAL (DASHBOARD)
+             ========================================== -->
+        <section id="view-dashboard" class="view-section" style="display: block;">
+          
+          <!-- Linha 1: 4 Metric Cards -->
+          <div class="grid-12" style="margin-bottom: 24px;">
+            
+            <div class="card col-3">
+              <div class="metric-label">Patrimônio total</div>
+              <div class="metric-value font-mono" id="heroTotalWorth">R$ 0,00</div>
+              <div class="metric-sub">
+                <span id="heroPnl24h" class="badge badge-gain">+0.00%</span>
+                <span style="color: var(--text-muted);">em 24 horas</span>
+              </div>
+            </div>
+
+            <div class="card col-3">
+              <div class="metric-label">Saldo disponível</div>
+              <div class="metric-value font-mono" id="heroBrlBalance">R$ 0,00</div>
+              <div class="metric-sub">
+                <span style="color: var(--color-accent); font-weight: 600;">Reais (BRL)</span>
+              </div>
+            </div>
+
+            <div class="card col-3">
+              <div class="metric-label">Valor investido</div>
+              <div class="metric-value font-mono" id="heroCryptoBalance">R$ 0,00</div>
+              <div class="metric-sub">
+                <span style="color: var(--text-secondary);">Custódia em cripto</span>
+              </div>
+            </div>
+
+            <div class="card col-3" style="display: flex; flex-direction: column; justify-content: space-between;">
+              <div class="metric-label">Status da Custódia</div>
+              <div style="font-size: var(--font-size-md); font-weight: 700; color: var(--color-gain); display: flex; align-items: center; gap: 6px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                Ledger Autenticado
+              </div>
+              <div style="font-size: var(--font-size-xs); color: var(--text-muted);" id="dashboardLastSyncText">Atualizado há poucos segundos</div>
+            </div>
+
+          </div>
+
+          <!-- Linha 2: Gráfico de Evolução (8 cols) + Distribuição Donut (4 cols) -->
+          <div class="grid-12" style="margin-bottom: 24px;">
+            
+            <div class="card col-8">
+              <div class="card-header">
+                <div class="card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                  Evolução do Patrimônio
+                </div>
+                <div style="display: flex; gap: 4px; background: var(--bg-input); padding: 3px; border-radius: var(--radius-xs);">
+                  <button class="btn btn-ghost btn-sm tf-btn" data-tf="24H" onclick="app.setDashboardTimeframe('24H')">24H</button>
+                  <button class="btn btn-ghost btn-sm tf-btn active" data-tf="7D" onclick="app.setDashboardTimeframe('7D')">7D</button>
+                  <button class="btn btn-ghost btn-sm tf-btn" data-tf="30D" onclick="app.setDashboardTimeframe('30D')">30D</button>
+                  <button class="btn btn-ghost btn-sm tf-btn" data-tf="1Y" onclick="app.setDashboardTimeframe('1Y')">1A</button>
+                </div>
+              </div>
+              <div style="height: 280px; width: 100%;">
+                <canvas id="dashboardEvolutionChartCanvas"></canvas>
+              </div>
+            </div>
+
+            <div class="card col-4">
+              <div class="card-header">
+                <div class="card-title">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a10 10 0 0 1 10 10h-10z"></path></svg>
+                  Distribuição da Carteira
+                </div>
+              </div>
+              <div style="height: 280px; position: relative;">
+                <canvas id="assetDonutChart"></canvas>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Linha 3: Doca de Ações Rápidas (Ícones SVG Vetorizados) -->
+          <div class="card" style="margin-bottom: 24px; padding: 18px 24px;">
+            <div class="action-grid">
+              <div class="action-btn-tile" onclick="app.openBuyModal('BTC')">
+                <div class="action-icon-wrap">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </div>
+                <div class="action-label">Comprar</div>
+              </div>
+
+              <div class="action-btn-tile" onclick="app.openSellModal('BTC')">
+                <div class="action-icon-wrap">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </div>
+                <div class="action-label">Vender</div>
+              </div>
+
+              <div class="action-btn-tile" onclick="app.openConvertModal('BTC')">
+                <div class="action-icon-wrap">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
+                </div>
+                <div class="action-label">Converter</div>
+              </div>
+
+              <div class="action-btn-tile" onclick="app.openTransferModal()">
+                <div class="action-icon-wrap">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </div>
+                <div class="action-label">Transferir</div>
+              </div>
+
+              <div class="action-btn-tile" onclick="app.openReceiveModal()">
+                <div class="action-icon-wrap">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><rect x="7" y="7" width="3" height="3"></rect><rect x="14" y="7" width="3" height="3"></rect><rect x="7" y="14" width="3" height="3"></rect></svg>
+                </div>
+                <div class="action-label">Receber</div>
+              </div>
+
+              <div class="action-btn-tile" onclick="app.openDepositModal()">
+                <div class="action-icon-wrap">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </div>
+                <div class="action-label">Adicionar Saldo</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Linha 4: Destaques de Mercado (7 cols) + Atividade Recente (5 cols) -->
+          <div class="grid-12">
+            
+            <div class="card col-7">
+              <div class="card-header">
+                <div class="card-title">Mercado</div>
+                <a href="#market" class="btn btn-secondary btn-sm">Ver todas as moedas</a>
+              </div>
+              <div class="table-wrap">
+                <table class="table-modern">
+                  <thead>
+                    <tr>
+                      <th>Ativo</th>
+                      <th style="text-align: right;">Cotação</th>
+                      <th style="text-align: right;">24h</th>
+                      <th style="text-align: right;">Ação</th>
+                    </tr>
+                  </thead>
+                  <tbody id="watchlistTableBody">
+                    <!-- Preenchido via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card col-5">
+              <div class="card-header">
+                <div class="card-title">Atividade recente</div>
+                <a href="#statement" class="btn btn-secondary btn-sm">Ver extrato</a>
+              </div>
+              <div id="recentActivityList">
+                <!-- Preenchido via JS -->
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ==========================================
+             SEÇÃO: MERCADO & COTAÇÕES
+             ========================================== -->
+        <section id="view-market" class="view-section" style="display: none;">
+          
+          <div class="card" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+              <div style="flex: 1; min-width: 280px;">
+                <input type="text" id="marketSearchInput" class="form-control" placeholder="Buscar por nome ou símbolo (ex: Bitcoin, SOL)..." />
+              </div>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button class="btn btn-secondary btn-sm active" data-category="ALL" onclick="app.filterMarketCategory('ALL', this)">Todos</button>
+                <button class="btn btn-secondary btn-sm" data-category="LAYER1" onclick="app.filterMarketCategory('LAYER1', this)">Layer 1</button>
+                <button class="btn btn-secondary btn-sm" data-category="ORACLE" onclick="app.filterMarketCategory('ORACLE', this)">DeFi & Oracles</button>
+                <button class="btn btn-secondary btn-sm" data-category="STABLECOIN" onclick="app.filterMarketCategory('STABLECOIN', this)">Stablecoins</button>
+                <button class="btn btn-secondary btn-sm" data-category="PAYMENT" onclick="app.filterMarketCategory('PAYMENT', this)">Pagamentos</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cards de Destaque -->
+          <div class="grid-12" style="margin-bottom: 24px;">
+            <div class="card col-6" id="highlightTopGainer" style="border-left: 4px solid var(--color-gain);">
+              <!-- Top Gainer -->
+            </div>
+            <div class="card col-6" id="highlightTopLoser" style="border-left: 4px solid var(--color-loss);">
+              <!-- Top Loser -->
+            </div>
+          </div>
+
+          <!-- Tabela Completa 100% Fluida -->
+          <div class="card">
+            <div class="table-wrap">
+              <table class="table-modern">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Criptomoeda</th>
+                    <th style="text-align: right;">Preço (BRL)</th>
+                    <th style="text-align: right;">Preço (USD)</th>
+                    <th style="text-align: right;">24h</th>
+                    <th style="text-align: right;">Volume (24h)</th>
+                    <th style="text-align: right;">Cap. de Mercado</th>
+                    <th style="text-align: center;">Operações</th>
+                  </tr>
+                </thead>
+                <tbody id="marketFullTableBody">
+                  <!-- Preenchido via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==========================================
+             SEÇÃO: DETALHES DA CRIPTOMOEDA (GRÁFICO INTERATIVO)
+             ========================================== -->
+        <section id="view-crypto-detail" class="view-section" style="display: none;">
+          
+          <div class="card" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+              <div style="display: flex; align-items: center; gap: 14px;">
+                <img id="detailCoinLogo" src="" style="width: 44px; height: 44px; border-radius: var(--radius-full);" />
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <h2 id="detailCoinName" style="font-size: var(--font-size-2xl); font-weight: 800;">Bitcoin</h2>
+                    <span id="detailCoinSymbol" class="badge badge-neutral font-mono">BTC</span>
+                    <span id="detailCoinChangeBadge" class="badge badge-gain">+0.00%</span>
+                  </div>
+                  <div class="font-mono" style="font-size: var(--font-size-2xl); font-weight: 800; margin-top: 2px;">
+                    <span id="detailCoinPriceBrl">R$ 0,00</span>
+                    <span id="detailCoinPriceUsd" style="font-size: var(--font-size-md); color: var(--text-muted); margin-left: 8px;">$ 0.00</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Timeframe Selector -->
+              <div style="display: flex; gap: 4px; background: var(--bg-input); padding: 4px; border-radius: var(--radius-sm);">
+                <button class="btn btn-ghost btn-sm tf-btn" data-tf="1H" onclick="app.setTimeframe('1H')">1H</button>
+                <button class="btn btn-ghost btn-sm tf-btn active" data-tf="24H" onclick="app.setTimeframe('24H')">24H</button>
+                <button class="btn btn-ghost btn-sm tf-btn" data-tf="7D" onclick="app.setTimeframe('7D')">7D</button>
+                <button class="btn btn-ghost btn-sm tf-btn" data-tf="30D" onclick="app.setTimeframe('30D')">30D</button>
+                <button class="btn btn-ghost btn-sm tf-btn" data-tf="1Y" onclick="app.setTimeframe('1Y')">1A</button>
+                <button class="btn btn-ghost btn-sm tf-btn" data-tf="ALL" onclick="app.setTimeframe('ALL')">MÁX</button>
+              </div>
+            </div>
+
+            <!-- Gráfico Interativo -->
+            <div style="height: 380px; margin-top: 24px; width: 100%;">
+              <canvas id="cryptoDetailChartCanvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Posição e Estatísticas -->
+          <div class="grid-12">
+            
+            <div class="card col-6">
+              <div class="card-header">
+                <div class="card-title">Sua Posição</div>
+                <span id="detailUserPnlBadge" class="badge badge-gain">R$ 0,00</span>
+              </div>
+              <div class="grid-12">
+                <div class="col-6">
+                  <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Saldo em Carteira</div>
+                  <div class="font-mono" style="font-size: var(--font-size-lg); font-weight: 700;" id="detailUserHoldingAmount">0.000000</div>
+                </div>
+                <div class="col-6">
+                  <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Valor em Reais</div>
+                  <div class="font-mono" style="font-size: var(--font-size-lg); font-weight: 700;" id="detailUserHoldingBrl">R$ 0,00</div>
+                </div>
+                <div class="col-6">
+                  <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Preço Médio Pago</div>
+                  <div class="font-mono" style="font-size: var(--font-size-md); font-weight: 600;" id="detailUserAvgPrice">R$ 0,00</div>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button class="btn btn-primary" style="flex: 1;" onclick="app.openBuyModal(app.selectedCryptoSymbol)">Comprar</button>
+                <button class="btn btn-secondary" style="flex: 1;" onclick="app.openSellModal(app.selectedCryptoSymbol)">Vender</button>
+              </div>
+            </div>
+
+            <div class="card col-6">
+              <div class="card-header">
+                <div class="card-title">Dados de Mercado</div>
+              </div>
+              <div class="grid-12">
+                <div class="col-6">
+                  <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Volume 24h</div>
+                  <div class="font-mono" style="font-size: var(--font-size-md); font-weight: 600;" id="detailStatVolume">R$ 0,00</div>
+                </div>
+                <div class="col-6">
+                  <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Capitalização</div>
+                  <div class="font-mono" style="font-size: var(--font-size-md); font-weight: 600;" id="detailStatMarketCap">R$ 0,00</div>
+                </div>
+                <div class="col-6">
+                  <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Máxima 24h</div>
+                  <div class="font-mono" style="font-size: var(--font-size-md); font-weight: 600;" id="detailStatHigh24h">R$ 0,00</div>
+                </div>
+                <div class="col-6">
+                  <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Mínima 24h</div>
+                  <div class="font-mono" style="font-size: var(--font-size-md); font-weight: 600;" id="detailStatLow24h">R$ 0,00</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- ==========================================
+             SEÇÃO: MINHA CARTEIRA
+             ========================================== -->
+        <section id="view-wallet" class="view-section" style="display: none;">
+          
+          <div class="grid-12" style="margin-bottom: 24px;">
+            <div class="card col-4">
+              <div class="metric-label">Patrimônio Consolidado</div>
+              <div class="metric-value font-mono" id="walletTotalWorth">R$ 0,00</div>
+            </div>
+            <div class="card col-4">
+              <div class="metric-label">Saldo em Reais</div>
+              <div class="metric-value font-mono" id="walletBrlBalance">R$ 0,00</div>
+            </div>
+            <div class="card col-4">
+              <div class="metric-label">Total em Criptoativos</div>
+              <div class="metric-value font-mono" id="walletCryptoTotal">R$ 0,00</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Posições em Carteira</div>
+              <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Endereço Público: <span class="font-mono" style="color: var(--color-accent);" id="walletPublicAddress">0xSAF...</span></div>
+            </div>
+            <div class="table-wrap">
+              <table class="table-modern">
+                <thead>
+                  <tr>
+                    <th>Ativo</th>
+                    <th style="text-align: right;">Quantidade</th>
+                    <th style="text-align: right;">Cotação Atual</th>
+                    <th style="text-align: right;">Valor em Reais</th>
+                    <th style="text-align: right;">Preço Médio</th>
+                    <th style="text-align: right;">Lucro / Prejuízo</th>
+                    <th style="text-align: right;">Alocação</th>
+                    <th style="text-align: center;">Operações</th>
+                  </tr>
+                </thead>
+                <tbody id="walletAssetsTableBody">
+                  <!-- Preenchido via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==========================================
+             SEÇÃO: EXTRATO & LEDGER
+             ========================================== -->
+        <section id="view-statement" class="view-section" style="display: none;">
+          
+          <div class="grid-12" style="margin-bottom: 24px;">
+            <div class="card col-4">
+              <div class="metric-label">Total Entradas (Créditos)</div>
+              <div class="metric-value font-mono" style="color: var(--color-gain);" id="statementTotalInflows">+ R$ 0,00</div>
+            </div>
+            <div class="card col-4">
+              <div class="metric-label">Total Saídas (Débitos)</div>
+              <div class="metric-value font-mono" style="color: var(--color-loss);" id="statementTotalOutflows">- R$ 0,00</div>
+            </div>
+            <div class="card col-4">
+              <div class="metric-label">Lançamentos no Período</div>
+              <div class="metric-value font-mono" id="statementTotalCount">0</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Extrato de Movimentações</div>
+              <button class="btn btn-secondary btn-sm" onclick="window.api.downloadLedgerCsv()">
+                Exportar CSV Oficial
+              </button>
+            </div>
+            <div class="table-wrap">
+              <table class="table-modern">
+                <thead>
+                  <tr>
+                    <th>Código</th>
+                    <th>Data e Hora</th>
+                    <th>Tipo</th>
+                    <th>Descrição</th>
+                    <th style="text-align: right;">Quantidade</th>
+                    <th style="text-align: right;">Saldo Resultante</th>
+                    <th style="text-align: center;">Comprovante</th>
+                  </tr>
+                </thead>
+                <tbody id="statementTableBody">
+                  <!-- Preenchido via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==========================================
+             SEÇÃO: PERFIL & SEGURANÇA (5 ABAS)
+             ========================================== -->
+        <section id="view-profile" class="view-section" style="display: none;">
+          
+          <!-- Tabs Navigation -->
+          <div class="tabs-nav">
+            <button class="tab-btn active" onclick="app.switchProfileTab('personal', this)">Dados Pessoais</button>
+            <button class="tab-btn" onclick="app.switchProfileTab('security', this)">Segurança & PIN</button>
+            <button class="tab-btn" onclick="app.switchProfileTab('preferences', this)">Preferências</button>
+            <button class="tab-btn" onclick="app.switchProfileTab('sessions', this)">Sessões & Dispositivos</button>
+          </div>
+
+          <!-- Aba 1: Dados Pessoais -->
+          <div id="tabContent-personal" class="profile-tab-content">
+            <div class="card">
+              <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: 20px;">Informações Cadastrais</h3>
+              <div class="grid-12">
+                <div class="col-6 form-group">
+                  <label class="form-label">Nome Completo</label>
+                  <div class="form-control" style="background: var(--bg-surface-elevated);" id="profileFullName">-</div>
+                </div>
+                <div class="col-6 form-group">
+                  <label class="form-label">Identificador (@username)</label>
+                  <div class="form-control font-mono" style="background: var(--bg-surface-elevated); color: var(--color-accent);" id="profileUsername">-</div>
+                </div>
+                <div class="col-6 form-group">
+                  <label class="form-label">E-mail</label>
+                  <div class="form-control" style="background: var(--bg-surface-elevated);" id="profileEmail">-</div>
+                </div>
+                <div class="col-6 form-group">
+                  <label class="form-label">CPF Mascarado</label>
+                  <div class="form-control font-mono" style="background: var(--bg-surface-elevated);" id="profileCpf">-</div>
+                </div>
+                <div class="col-6 form-group">
+                  <label class="form-label">Telefone</label>
+                  <div class="form-control" style="background: var(--bg-surface-elevated);" id="profilePhone">-</div>
+                </div>
+                <div class="col-6 form-group">
+                  <label class="form-label">Status da Conta</label>
+                  <div style="display: flex; gap: 8px; margin-top: 4px;">
+                    <span class="badge badge-gain" id="profileStatusBadge">Conta ativa</span>
+                    <span class="badge badge-neutral" id="profileRoleBadge">Cliente</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aba 2: Segurança & PIN -->
+          <div id="tabContent-security" class="profile-tab-content" style="display: none;">
+            <div class="grid-12">
+              
+              <div class="card col-6">
+                <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: 16px;">PIN de Transações</h3>
+                <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: 20px;">Utilizado para autorizar compras, vendas, conversões e transferências.</p>
+                <form onsubmit="event.preventDefault(); const pin = document.getElementById('newPinInput').value; window.api.setPin(pin).then(() => { app.showToast('PIN salvo com sucesso!', 'success'); document.getElementById('newPinInput').value = ''; });">
+                  <div class="form-group">
+                    <label class="form-label">Novo PIN (4 dígitos numéricos)</label>
+                    <input type="password" id="newPinInput" class="form-control font-mono" maxlength="4" placeholder="••••" required />
+                  </div>
+                  <button type="submit" class="btn btn-primary">Atualizar PIN</button>
+                </form>
+              </div>
+
+              <div class="card col-6">
+                <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: 16px;">Alterar Senha</h3>
+                <form onsubmit="event.preventDefault(); const cur = document.getElementById('curPass').value; const nw = document.getElementById('newPass').value; window.api.changePassword(cur, nw).then(() => { app.showToast('Senha alterada!', 'success'); document.getElementById('curPass').value = ''; document.getElementById('newPass').value = ''; });">
+                  <div class="form-group">
+                    <label class="form-label">Senha Atual</label>
+                    <input type="password" id="curPass" class="form-control" required />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nova Senha</label>
+                    <input type="password" id="newPass" class="form-control" placeholder="Mínimo 8 caracteres" required />
+                  </div>
+                  <button type="submit" class="btn btn-secondary">Alterar Senha</button>
+                </form>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Aba 3: Preferências -->
+          <div id="tabContent-preferences" class="profile-tab-content" style="display: none;">
+            <div class="card">
+              <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: 16px;">Preferências da Plataforma</h3>
+              <div class="form-group">
+                <label class="form-label">Tema da Interface</label>
+                <div style="display: flex; gap: 12px; margin-top: 6px;">
+                  <button class="btn btn-secondary" onclick="document.documentElement.setAttribute('data-theme', 'dark'); localStorage.setItem('saf_theme', 'dark');">Modo Escuro (Padrão)</button>
+                  <button class="btn btn-secondary" onclick="document.documentElement.setAttribute('data-theme', 'light'); localStorage.setItem('saf_theme', 'light');">Modo Claro</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Aba 4: Sessões -->
+          <div id="tabContent-sessions" class="profile-tab-content" style="display: none;">
+            <div class="card">
+              <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: 16px;">Dispositivos Conectados</h3>
+              <div style="padding: 16px; background: var(--bg-surface-elevated); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <div style="font-weight: 600;">Sessão Atual (Navegador Web)</div>
+                  <div style="font-size: var(--font-size-xs); color: var(--text-muted);">IP: 127.0.0.1 • São Paulo, Brasil • Ativo agora</div>
+                </div>
+                <span class="badge badge-gain">Esta sessão</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- ==========================================
+             SEÇÃO: PAINEL EXECUTIVO ADMIN
+             ========================================== -->
+        <section id="view-admin" class="view-section" style="display: none;">
+          
+          <div class="grid-12" style="margin-bottom: 24px;">
+            <div class="card col-6">
+              <div class="metric-label">Status da API de Mercado</div>
+              <div class="metric-value font-mono" style="color: var(--color-gain);" id="adminMarketApiStatus">ONLINE</div>
+            </div>
+            <div class="card col-6">
+              <div class="metric-label">Última Sincronização</div>
+              <div class="metric-value font-mono" style="font-size: var(--font-size-lg);" id="adminMarketLastSync">-</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Gestão de Correntistas</div>
+            </div>
+            <div class="table-wrap">
+              <table class="table-modern">
+                <thead>
+                  <tr>
+                    <th>Nome</th>
+                    <th>Identificador</th>
+                    <th>E-mail</th>
+                    <th>CPF</th>
+                    <th>Status</th>
+                    <th style="text-align: center;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="adminUsersTableBody">
+                  <!-- Preenchido via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+
+      <!-- Bottom Nav Mobile -->
+      <nav class="mobile-bottom-nav">
+        <a class="bottom-nav-item active" data-view="dashboard" href="#dashboard">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Início
+        </a>
+        <a class="bottom-nav-item" data-view="market" href="#market">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline><polyline points="16 7 22 7 22 13"></polyline></svg>
+          Mercado
+        </a>
+        <a class="bottom-nav-item" data-view="wallet" href="#wallet">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg>
+          Carteira
+        </a>
+        <a class="bottom-nav-item" data-view="statement" href="#statement">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+          Extrato
+        </a>
+      </nav>
+
+    </div>
+  </div>
+
+  <!-- ==========================================
+       MODAIS CUSTOMIZADOS & TECLADO PIN PAD
+       ========================================== -->
+
+  <!-- Modal PIN Pad Keypad -->
+  <div id="modalPinPad" class="modal-backdrop">
+    <div class="modal-card" style="max-width: 360px;">
+      <div class="modal-header">
+        <div class="card-title" id="pinModalTitle">Autorização de Segurança</div>
+        <button class="btn-icon-square" style="width: 32px; height: 32px;" onclick="app.closeModal('modalPinPad')">✕</button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm);" id="pinModalSubtitle">Digite seu PIN de 4 dígitos</p>
+        
+        <div class="pin-display-dots">
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+          <div class="pin-dot"></div>
+        </div>
+
+        <div class="pin-keys-grid">
+          <button class="pin-key" onclick="app.pinKeyPress('1')">1</button>
+          <button class="pin-key" onclick="app.pinKeyPress('2')">2</button>
+          <button class="pin-key" onclick="app.pinKeyPress('3')">3</button>
+          <button class="pin-key" onclick="app.pinKeyPress('4')">4</button>
+          <button class="pin-key" onclick="app.pinKeyPress('5')">5</button>
+          <button class="pin-key" onclick="app.pinKeyPress('6')">6</button>
+          <button class="pin-key" onclick="app.pinKeyPress('7')">7</button>
+          <button class="pin-key" onclick="app.pinKeyPress('8')">8</button>
+          <button class="pin-key" onclick="app.pinKeyPress('9')">9</button>
+          <button class="pin-key" style="font-size: var(--font-size-xs);" onclick="app.closeModal('modalPinPad')">Cancelar</button>
+          <button class="pin-key" onclick="app.pinKeyPress('0')">0</button>
+          <button class="pin-key" onclick="app.pinBackspace()">⌫</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Compra -->
+  <div id="modalBuyCrypto" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="card-title">Comprar <span id="buyModalCoinName">Bitcoin</span> (<span id="buyModalSymbol">BTC</span>)</div>
+        <button class="btn-icon-square" style="width: 32px; height: 32px;" onclick="app.closeModal('modalBuyCrypto')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: var(--bg-surface-elevated); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 18px;">
+          <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Cotação Atual de Mercado</div>
+          <div class="font-mono" style="font-size: var(--font-size-xl); font-weight: 800; color: var(--color-gain);" id="buyModalCurrentPrice">R$ 0,00</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Valor da Compra (em Reais R$)</label>
+          <input type="number" id="buyInputAmountBrl" class="form-control font-mono" step="0.01" min="1" value="100.00" oninput="app.recalculateBuyEst()" />
+        </div>
+
+        <div style="background: rgba(0,0,0,0.15); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; font-size: var(--font-size-sm); margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">Taxa de Execução (0.15%):</span>
+            <span class="font-mono" id="buyEstFee">R$ 0,15</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: var(--font-size-md); font-weight: 700;">
+            <span>Quantidade Estimada:</span>
+            <span class="font-mono" style="color: var(--color-accent);" id="buyEstCryptoAcquired">0.00000000 BTC</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="app.submitBuy()">
+          Confirmar Compra
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Venda -->
+  <div id="modalSellCrypto" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="card-title">Vender <span id="sellModalCoinName">Bitcoin</span> (<span id="sellModalSymbol">BTC</span>)</div>
+        <button class="btn-icon-square" style="width: 32px; height: 32px;" onclick="app.closeModal('modalSellCrypto')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: var(--bg-surface-elevated); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 18px;">
+          <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Cotação Atual de Mercado</div>
+          <div class="font-mono" style="font-size: var(--font-size-xl); font-weight: 800;" id="sellModalCurrentPrice">R$ 0,00</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Quantidade de Criptoativo a Vender</label>
+          <input type="number" id="sellInputCryptoAmount" class="form-control font-mono" step="0.000001" min="0.000001" value="0.001" oninput="app.recalculateSellEst()" />
+        </div>
+
+        <div style="background: rgba(0,0,0,0.15); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; font-size: var(--font-size-sm); margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">Taxa de Execução (0.15%):</span>
+            <span class="font-mono" id="sellEstFee">R$ 0,00</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: var(--font-size-md); font-weight: 700;">
+            <span>Valor a Receber em Reais:</span>
+            <span class="font-mono" style="color: var(--color-gain);" id="sellEstBrlReceived">R$ 0,00</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="app.submitSell()">
+          Confirmar Venda
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Conversão -->
+  <div id="modalConvertCrypto" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="card-title">Conversão entre Moedas</div>
+        <button class="btn-icon-square" style="width: 32px; height: 32px;" onclick="app.closeModal('modalConvertCrypto')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="grid-12" style="margin-bottom: 16px;">
+          <div class="col-6 form-group">
+            <label class="form-label">Origem</label>
+            <select id="convertFromSelect" class="form-control" onchange="app.recalculateConvertEst()"></select>
+          </div>
+          <div class="col-6 form-group">
+            <label class="form-label">Destino</label>
+            <select id="convertToSelect" class="form-control" onchange="app.recalculateConvertEst()"></select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Quantidade a Converter</label>
+          <input type="number" id="convertFromAmount" class="form-control font-mono" step="0.0001" min="0.00000001" value="0.01" oninput="app.recalculateConvertEst()" />
+        </div>
+
+        <div style="background: rgba(0,0,0,0.15); padding: 14px; border-radius: var(--radius-sm); margin-bottom: 20px;">
+          <div style="display: flex; justify-content: space-between; font-size: var(--font-size-sm); margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">Taxa Estimada (0.15%):</span>
+            <span class="font-mono" id="convertEstFee">R$ 0,00</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: var(--font-size-md); font-weight: 700;">
+            <span>Você Receberá:</span>
+            <span class="font-mono" style="color: var(--color-accent);" id="convertEstToAmount">0.00000000 ETH</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="app.submitConvert()">
+          Confirmar Conversão
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Transferência P2P -->
+  <div id="modalInternalTransfer" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="card-title">Transferência Interna</div>
+        <button class="btn-icon-square" style="width: 32px; height: 32px;" onclick="app.closeModal('modalInternalTransfer')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Destinatário (@username ou E-mail)</label>
+          <input type="text" id="transferRecipientInput" class="form-control" placeholder="@username_destinatario" required />
+        </div>
+
+        <div class="grid-12">
+          <div class="col-4 form-group">
+            <label class="form-label">Ativo</label>
+            <select id="transferAssetSelect" class="form-control">
+              <option value="BRL">BRL (Reais)</option>
+              <option value="BTC">BTC</option>
+              <option value="ETH">ETH</option>
+              <option value="SOL">SOL</option>
+              <option value="USDT">USDT</option>
+            </select>
+          </div>
+          <div class="col-8 form-group">
+            <label class="form-label">Quantidade</label>
+            <input type="number" id="transferAmountInput" class="form-control font-mono" step="0.000001" min="0.000001" placeholder="0.00" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Mensagem (Opcional)</label>
+          <input type="text" id="transferDescInput" class="form-control" placeholder="ex: Pagamento de serviços" />
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="app.submitTransfer()">
+          Enviar Transferência
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Receber QR Code -->
+  <div id="modalReceiveCrypto" class="modal-backdrop">
+    <div class="modal-card" style="max-width: 380px;">
+      <div class="modal-header">
+        <div class="card-title">Receber Criptoativos</div>
+        <button class="btn-icon-square" style="width: 32px; height: 32px;" onclick="app.closeModal('modalReceiveCrypto')">✕</button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: 16px;">Compartilhe seu identificador único para receber transferências instantâneas.</p>
+        
+        <div style="background: #FFFFFF; padding: 14px; border-radius: var(--radius-md); display: inline-block; margin-bottom: 16px;">
+          <img id="receiveQrImg" src="" style="width: 160px; height: 160px; display: block;" />
+        </div>
+
+        <div style="background: var(--bg-surface-elevated); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px;">
+          <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Seu Identificador</div>
+          <div class="font-mono" style="font-weight: 700; font-size: var(--font-size-lg); color: var(--color-accent);" id="receiveUsernameDisplay">@usuario</div>
+        </div>
+
+        <button class="btn btn-secondary btn-block" onclick="app.copyReceiveUsername()">
+          Copiar Identificador
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Depósito Simulado -->
+  <div id="modalDepositSimulated" class="modal-backdrop">
+    <div class="modal-card" style="max-width: 400px;">
+      <div class="modal-header">
+        <div class="card-title">Adicionar Saldo em Reais</div>
+        <button class="btn-icon-square" style="width: 32px; height: 32px;" onclick="app.closeModal('modalDepositSimulated')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="color: var(--text-muted); font-size: var(--font-size-sm); margin-bottom: 18px;">
+          Adicione saldo simulado em Reais para realizar compras e testes de investimento na plataforma.
+        </p>
+
+        <div class="form-group">
+          <label class="form-label">Valor do Depósito (R$)</label>
+          <input type="number" id="depositSimulatedAmountInput" class="form-control font-mono" min="10" step="10" value="5000.00" />
+        </div>
+
+        <button class="btn btn-primary btn-block" onclick="app.submitDepositSimulated()">
+          Creditar Saldo Imediatamente
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Comprovante -->
+  <div id="modalReceipt" class="modal-backdrop">
+    <div class="modal-card" style="max-width: 420px;">
+      <div class="modal-header">
+        <div class="card-title">Comprovante de Operação</div>
+        <button class="btn-icon-square" style="width: 32px; height: 32px;" onclick="app.closeModal('modalReceipt')">✕</button>
+      </div>
+      <div class="modal-body" style="font-size: var(--font-size-md);">
+        <div style="text-align: center; margin-bottom: 18px;">
+          <div style="font-size: var(--font-size-md); font-weight: 700; color: var(--color-accent);" id="receiptOperationTitle">Operação</div>
+          <div class="font-mono" style="font-size: var(--font-size-2xl); font-weight: 800; margin-top: 4px;" id="receiptValue">R$ 0,00</div>
+          <div style="font-size: var(--font-size-xs); color: var(--text-muted);" id="receiptDate">-</div>
+        </div>
+
+        <div style="background: var(--bg-surface-elevated); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 16px;">
+          <div style="font-size: var(--font-size-xs); color: var(--text-muted);">Autenticação Digital (UUID)</div>
+          <div class="font-mono" style="font-size: var(--font-size-xs); word-break: break-all; margin-top: 2px;" id="receiptAuthCode">-</div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 16px;">
+          <img id="receiptQrImg" src="" style="width: 90px; height: 90px; background: #FFF; padding: 4px; border-radius: 6px;" />
+          <div style="font-size: var(--font-size-xs); color: var(--text-muted); margin-top: 4px;">Autenticado em Ledger Imutável Banco SAF</div>
+        </div>
+
+        <button class="btn btn-secondary btn-block" onclick="app.printReceipt()">
+          Imprimir Comprovante
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Container de Toasts -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Scripts -->
+  <script src="/js/api.js"></script>
+  <script src="/js/market.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
