@@ -1,19 +1,8 @@
 {
-  "version": 2,
-  "public": true,
-  "outputDirectory": "src/main/resources/static",
-  "routes": [
+  "rewrites": [
     {
-      "src": "/css/(.*)",
-      "dest": "/css/$1"
-    },
-    {
-      "src": "/js/(.*)",
-      "dest": "/js/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/((?!css|js|public|.*\\..*).*)",
+      "destination": "/index.html"
     }
   ]
 }
