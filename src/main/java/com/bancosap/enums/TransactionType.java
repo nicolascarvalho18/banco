@@ -1,0 +1,14 @@
+package com.bancosap.enums;
+
+public enum TransactionType {
+    TRANSFERENCIA_ENVIADA,
+    TRANSFERENCIA_RECEBIDA,
+    PIX_ENVIADO,
+    PIX_RECEBIDO,
+    DEPOSITO,
+    PAGAMENTO_BOLETO,
+    COMPRA_CARTAO,
+    CRIPTO_COMPRA,
+    CRIPTO_VENDA,
+    CRIPTO_TRANSFERENCIA_P2P
+}

@@ -1,0 +1,70 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  error:
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  application:
+    name: banco-sap
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:h2:mem:bancosapdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: false
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          time_zone: America/Sao_Paulo
+  flyway:
+    enabled: false # Usado no perfil prod com PostgreSQL
+  jackson:
+    time-zone: America/Sao_Paulo
+    serialization:
+      write-dates-as-timestamps: false
+
+# Configuracoes de Seguranca do Banco SAP
+bancosap:
+  security:
+    jwt:
+      secret: bW9kZXJuLWJhbmNvLXNhcC1zZWN1cmUtand0LXNlY3JldC1rZXktZXhhbXBsZS0yNTYtYml0cw==
+      access-token-expiration-ms: 900000 # 15 minutos
+      refresh-token-expiration-ms: 604800000 # 7 dias
+    rate-limit:
+      max-failed-login-attempts: 5
+      lockout-duration-minutes: 15
+    cors:
+      allowed-origins: "http://localhost:8080,http://127.0.0.1:8080,http://localhost:3000"
+      allowed-methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+      allowed-headers: "*"
+      allow-credentials: true
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
+logging:
+  level:
+    root: INFO
+    com.bancosap: DEBUG
+    org.springframework.security: INFO

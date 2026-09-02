@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: bancosap-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bancosapdb
+      POSTGRES_USER: bancosap
+      POSTGRES_PASSWORD: bancosapsecret
+    ports:
+      - "5432:5432"
+    volumes:
+      - bancosap-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bancosap -d bancosapdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  banco-sap-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bancosap-backend
+    restart: unless-stopped
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-db:5432/bancosapdb
+      SPRING_DATASOURCE_USERNAME: bancosap
+      SPRING_DATASOURCE_PASSWORD: bancosapsecret
+      JWT_SECRET: bW9kZXJuLWJhbmNvLXNhcC1zZWN1cmUtand0LXNlY3JldC1rZXktZXhhbXBsZS0yNTYtYml0cw==
+    ports:
+      - "8080:8080"
+
+volumes:
+  bancosap-pgdata:
+    driver: local
